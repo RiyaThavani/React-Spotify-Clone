@@ -1,32 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  current:false,
-  controls:false,
-  playing:false,
+  current: false,
+  playing: false,
 }
 
 export const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
-    setCurrent:(state,action )=>{
-        state.current = action.payload
+    setCurrent: (state, action) => {
+      state.current = action.payload
     },
-    setControls:(state,action )=>{
-        state.current = action.payload
-    },
-    setPlaying:(state,action )=>{
-        state.current = action.payload
+    setPlaying: (state, action) => {
+      state.playing = action.payload
     },
   },
 })
 
 
-export const { 
-    setCurrent, 
-    setControls, 
-    setPlaying 
+export const {
+  setCurrent,
+  setPlaying,
 } = playerSlice.actions
 
 export default playerSlice.reducer

@@ -1,0 +1,58 @@
+export default [
+  {
+    id: 1,
+    title: 'Aurora',
+    desc: 'Chill electronic vibes',
+    image: 'https://i.scdn.co/image/ab67616d0000b2738c6b0a4f3dd430f3ef2f7cde',
+    src: 'aurora',
+  },
+  {
+    id: 2,
+    title: 'Dopamine',
+    desc: 'Uplifting pop energy',
+    image: 'https://i.scdn.co/image/ab67616d0000b273659aae4d9318696beb2c2d7f',
+    src: 'dopamine',
+  },
+  {
+    id: 3,
+    title: 'Fire',
+    desc: 'Powerful synth-driven anthem',
+    image: 'https://i.scdn.co/image/ab67616d0000b2734fefc8ad5da884869b5ef2b4',
+    src: 'fire',
+  },
+  {
+    id: 4,
+    title: 'Shivers',
+    desc: 'Atmospheric late-night track',
+    image: 'https://i.scdn.co/image/ab67616d0000b273811683a4f49f9f44fc94aa53',
+    src: 'shivers',
+  },
+  {
+    id: 5,
+    title: 'Sugar',
+    desc: 'Bright feel-good pop',
+    image: 'https://i.scdn.co/image/ab67616d0000b2732e7dd0c2215e1da089dc85e7',
+    src: 'sugar',
+  },
+  {
+    id: 6,
+    title: 'Golden Hour',
+    desc: 'Warm indie pop',
+    image: 'https://i.scdn.co/image/ab67616d0000b273d3e18a3e09c4b8b2a4ba2ce7',
+    src: 'aurora',
+  },
+  {
+    id: 7,
+    title: 'Night Drive',
+    desc: 'Synthwave mood for late rides',
+    image: 'https://i.scdn.co/image/ab67616d0000b273a5b356ee31c1fcb3af6c8da1',
+    src: 'dopamine',
+  },
+  {
+    id: 8,
+    title: 'Rush',
+    desc: 'Fast-paced workout energy',
+    image: 'https://i.scdn.co/image/ab67616d0000b2739b6f58bb5c8c4ecc112f1dd7',
+    src: 'fire',
+  },
+];

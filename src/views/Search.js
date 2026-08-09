@@ -1,12 +1,24 @@
-import categories from 'data/categories';
-import Category from 'components/SearchContent/Category';
+import { useMemo, useState } from 'react';
+import songs from 'data/songs';
+import SongItem from 'components/SongItem';
 import Title from 'components/Title';
-import favorites from 'data/favorites'
-import WideCategory from 'components/SearchContent/WideCategory';
-function Search (){
+import Category from 'components/SearchContent/Category';
+import categories from 'data/categories';
 
+function Search() {
+  const [query, setQuery] = useState('');
 
-    return(<div>
+  const filteredSongs = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return songs;
+    return songs.filter(song =>
+      song.title.toLowerCase().includes(normalized) ||
+      song.desc.toLowerCase().includes(normalized)
+    );
+  }, [query]);
+
+  return (
+    <div>
         
 
 

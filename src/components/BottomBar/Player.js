@@ -1,11 +1,10 @@
-import {Icon } from 'Icons'
-import {useAudio} from 'react-use';
+import { Icon } from 'Icons'
+import { useAudio } from 'react-use';
 import { secondsToTime } from 'utils';
 import CostumRange from './CostumRange';
-import {useDispatch,useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import {setControls} from 'stores/player';
-import { fireEvent } from '@testing-library/react';
+import { setPlaying } from 'stores/player';
 
 import aurora from 'sounds/aurora.mp3';
 import dopamine from 'sounds/dopamine.mp3';
@@ -17,32 +16,28 @@ import sugar from 'sounds/sugar.mp3';
 export default function Player(){
 
     const dispatch = useDispatch();
-    const {current} = useSelector(state=>state.player);
-     
-    const getmp3 ={
-        'aurora':aurora,
-        'dopamine':dopamine,
-        'fire':fire,
-        'shivers':shivers,
-        'sugar':sugar
-    }
+  const { current } = useSelector(state => state.player);
 
+  const getmp3 = {
+    aurora,
+    dopamine,
+    fire,
+    shivers,
+    sugar,
+  }
 
-    const [audio, state, controls, ref] = useAudio({
-        src:getmp3[current.src],
-      });
+  const [audio, state, controls, ref] = useAudio({
+    src: current?.src ? getmp3[current.src] : undefined,
+  });
 
-      useEffect(()=>{
- 
-        controls.play();
-    
-    },[current])
+  useEffect(() => {
+    if (!current?.src) return;
+    controls.play();
+  }, [current, controls]);
 
-useEffect(()=>{
- 
-    dispatch(setControls(controls));
-
-},[])
+  useEffect(() => {
+    dispatch(setPlaying(state.playing));
+  }, [state.playing, dispatch]);
 
     return (<div className="flex justify-between items-center h-full px-4">
         <div className="min-w-[11.25rem] w-[30%] flex item-center">
