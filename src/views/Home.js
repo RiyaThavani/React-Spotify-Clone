@@ -1,54 +1,36 @@
-
 import Section from 'components/Section.js';
+import songs from 'data/songs';
 
-function Home (){
+const GENRES = ['Featured', 'Bollywood', 'English', 'Hip-Hop', 'Electronic', 'Punjabi', 'Rock', 'R&B'];
 
+const GENRE_LABELS = {
+  Featured:   'Featured tracks',
+  Bollywood:  '🎵 Bollywood Hits',
+  English:    '🎧 English Pop',
+  'Hip-Hop':  '🔥 Hip-Hop',
+  Electronic: '⚡ Electronic',
+  Punjabi:    '🥁 Punjabi Beats',
+  Rock:       '🎸 Rock Classics',
+  'R&B':      '🎶 R&B & Soul',
+};
 
-    const items=[
-        {
-            id:1,
-            title:'#TBT 2021',
-            desc:'Dünden bu yıla kalanlar.',
-            image:'https://i.scdn.co/image/ab67706f0000000277a376a24530b12d676fb831',
-            src:'aurora'
-        },
-        {
-            id:2,
-            title:'Türkçe 2010lar',
-            desc:' O eskilerin şarkılarını dinleme vakti.',
-            image:'https://i.scdn.co/image/ab67706f0000000228f52e6ebf32ef2feaa1ad62',
-            src:'dopamine'
-        },
-        {
-            id:3,
-            title:'LOOP',
-            desc:'Döne döne dinlediğin, son yılların hit yabancı şarkıları.',
-           image:'https://i.scdn.co/image/ab67706f00000002203768c88c741aa117804007',
-           src:'fire'
-        },
-        {
-            id:4,
-            title:'Prom Night',
-            desc:'The best tracks for Prom night 2022.',
-            image:'https://i.scdn.co/image/ab67706f000000027a232e74cb5baf2ec1659f0a',
-            src:'shivers'
-        },
-        {
-            id:5,
-            title:'Beast Mode',
-            desc:'Get your beast mode on!',
-            image:'https://i.scdn.co/image/ab67706f000000029249b35f23fb596b6f006a15',
-            src:'sugar'
-        },
-        
-    ]
-
-    return(<div>
-        <Section title='Beğendiklerin ve dahası' more='#' items={items}/>
-        <Section title='Sedat için derlendi' more='#' items={items}/>
-        <Section title='Bu yılın favorileri' more='#' items={items}/>
-    </div>)
+function Home() {
+  return (
+    <div>
+      {GENRES.map(genre => {
+        const genreSongs = songs.filter(s => s.genres.includes(genre));
+        if (!genreSongs.length) return null;
+        return (
+          <Section
+            key={genre}
+            title={GENRE_LABELS[genre] || genre}
+            more='#'
+            items={genreSongs}
+          />
+        );
+      })}
+    </div>
+  );
 }
-
 
 export default Home;

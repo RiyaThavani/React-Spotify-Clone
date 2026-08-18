@@ -4,124 +4,198 @@ import { secondsToTime } from 'utils';
 import CostumRange from './CostumRange';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setPlaying } from 'stores/player';
+import { setCurrent, setPlaying } from 'stores/player';
+import songs from 'data/songs';
+import { getSongPreview } from 'services/musicApi';
 
-import aurora from 'sounds/aurora.mp3';
-import dopamine from 'sounds/dopamine.mp3';
-import fire from 'sounds/fire.mp3';
-import shivers from 'sounds/shivers.mp3';
-import sugar from 'sounds/sugar.mp3';
-
-
-export default function Player(){
-
+export default function Player() {
     const dispatch = useDispatch();
-  const { current } = useSelector(state => state.player);
+    const { current, playing } = useSelector(state => state.player);
 
-  const getmp3 = {
-    aurora,
-    dopamine,
-    fire,
-    shivers,
-    sugar,
+  async function changeTrack(direction) {
+    if (!songs.length) return;
+    const currentIndex = songs.findIndex(song => song.id === current?.id);
+    const nextIndex = currentIndex === -1
+      ? 0
+      : (currentIndex + direction + songs.length) % songs.length;
+
+    try {
+      const playableSong = await getSongPreview(songs[nextIndex]);
+      dispatch(setCurrent(playableSong));
+      dispatch(setPlaying(true));
+    } catch {
+      dispatch(setPlaying(false));
+    }
   }
 
-  const [audio, state, controls, ref] = useAudio({
-    src: current?.src ? getmp3[current.src] : undefined,
+  const [audio, state, controls, audioRef] = useAudio({
+    src: current?.previewUrl,
+    onEnded: () => changeTrack(1),
   });
 
   useEffect(() => {
-    if (!current?.src) return;
-    controls.play();
-  }, [current, controls]);
+    const handlePlayerCommand = event => {
+      const element = audioRef.current;
+      if (!element) return;
 
-  useEffect(() => {
-    dispatch(setPlaying(state.playing));
-  }, [state.playing, dispatch]);
+      if (event.detail?.action === 'toggle') {
+        if (element.paused) {
+          element.play().catch(() => dispatch(setPlaying(false)));
+        } else {
+          element.pause();
+        }
+        return;
+      }
 
-    return (<div className="flex justify-between items-center h-full px-4">
-        <div className="min-w-[11.25rem] w-[30%] flex item-center">
-             
-             {current && <div className='flex items-center'>
-                          <div className='h-14 w-14 mr-2 '>
-                               <img src={current.image}></img>
-                          </div>
-                          <div>
-                             <h6 className='text-sm hover:underline'>{current.title}</h6>
-                          </div>
-             </div>}
-        </div>
+      const { previewUrl } = event.detail || {};
+      if (!previewUrl) return;
+      element.src = previewUrl;
+      element.load();
+      element.play().catch(() => dispatch(setPlaying(false)));
+    };
 
-        <div className="flex flex-col items-center max-w-[45.125rem] w-[40%] ">
-            <div className="flex item-center gap-x-2">
-                <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='shuffle' size={16}/>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='playerPrev' size={16}/>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center   bg-white rounded-full hover:scale-[1.06]"
-                onClick={ controls[state?.playing?'pause':'play'] }>
-                
-                    <Icon name={state?.playing?'pause':'play'} size={16}/>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='playerNext' size={16}/>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='repeat' size={16}/>
-                </button>
+    window.addEventListener('player-command', handlePlayerCommand);
+    return () => window.removeEventListener('player-command', handlePlayerCommand);
+  }, [audioRef, dispatch]);
+
+    useEffect(() => {
+        if (!current?.src) return;
+        if (playing) {
+            controls.play();
+        } else {
+            controls.pause();
+        }
+        // `controls` is recreated by react-use on each render; it must not be a
+        // dependency or this effect would repeatedly restart the audio.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [current?.src, playing]);
+
+    useEffect(() => {
+        dispatch(setPlaying(state.playing));
+    }, [state.playing, dispatch]);
+
+    return (
+        <div className="flex justify-between items-center h-full px-4">
+            {/* ── Left: Current Song Info ── */}
+            <div className="min-w-[11.25rem] w-[30%] flex items-center">
+                {current && (
+                    <div className='flex items-center gap-3'>
+                        <div className='h-14 w-14 flex-shrink-0'>
+                            <img
+                                src={current.image}
+                                alt={current.title}
+                                className='h-full w-full object-cover rounded'
+                            />
+                        </div>
+                        <div className='overflow-hidden'>
+                            <h6 className='text-sm font-semibold hover:underline truncate'>
+                                {current.title}
+                            </h6>
+              {current.artist && (
+                <p className='text-xs text-gray-400 truncate hover:underline cursor-pointer'>
+                  {current.artist}
+                </p>
+              )}
+              {current.storeUrl && (
+                <a
+                  href={current.storeUrl}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='block text-[0.65rem] text-link hover:underline truncate'
+                >
+                  Preview courtesy of iTunes · View song
+                </a>
+              )}
+                        </div>
+                    </div>
+                )}
             </div>
-            <div className='w-full flex item-center gap-x-2'>
-                {audio}
-                <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center'>
-                {secondsToTime(state?.time)}
-                </div>
-                  
-                  <CostumRange 
-                   step ={0.1}
-                   min={0}
-                   max={state?.duration || 1 }
-                   value={state?.time}
-                   onChange={value => controls.seek(value )}
 
-                  />
-        <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center'>
-                {secondsToTime(state?.duration)}
+            {/* ── Centre: Controls + Progress ── */}
+            <div className="flex flex-col items-center max-w-[45.125rem] w-[40%]">
+                <div className="flex items-center gap-x-2">
+                    <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
+                        <Icon name='shuffle' size={16} />
+                    </button>
+                    <button
+                        aria-label="Previous track"
+                        onClick={() => changeTrack(-1)}
+                        className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100"
+                    >
+                        <Icon name='playerPrev' size={16} />
+                    </button>
+          <button
+            className="w-8 h-8 flex items-center justify-center bg-white rounded-full hover:scale-[1.06] transition-transform"
+            onClick={() => {
+              if (!current) return;
+              if (state.playing) {
+                controls.pause();
+                dispatch(setPlaying(false));
+              } else {
+                controls.play().catch(() => dispatch(setPlaying(false)));
+                dispatch(setPlaying(true));
+              }
+            }}
+                    >
+                        <Icon name={state?.playing ? 'pause' : 'play'} size={16} />
+                    </button>
+                    <button
+                        aria-label="Next track"
+                        onClick={() => changeTrack(1)}
+                        className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100"
+                    >
+                        <Icon name='playerNext' size={16} />
+                    </button>
+                    <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
+                        <Icon name='repeat' size={16} />
+                    </button>
                 </div>
 
+                <div className='w-full flex items-center gap-x-2'>
+                    {audio}
+                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-10 text-right'>
+                        {secondsToTime(state?.time)}
+                    </div>
+                    <CostumRange
+                        step={0.1}
+                        min={0}
+                        max={state?.duration || 1}
+                        value={state?.time}
+                        onChange={value => controls.seek(value)}
+                    />
+                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-10'>
+                        {secondsToTime(state?.duration)}
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div className="min-w-[11.25rem] w-[30%] flex justify-end item-center">
-        <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='queue' size={16}/>
-                </button>
-
+            {/* ── Right: Volume Controls ── */}
+            <div className="min-w-[11.25rem] w-[30%] flex justify-end items-center gap-1">
                 <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='device' size={16}/>
+                    <Icon name='queue' size={16} />
                 </button>
-
                 <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name={state?.volume===0?'volumeMute':'volumeNormal'} size={16}/>
+                    <Icon name='device' size={16} />
                 </button>
-
+                <button
+                    className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100"
+                    onClick={() => controls.volume(state?.volume === 0 ? 0.7 : 0)}
+                >
+                    <Icon name={state?.volume === 0 ? 'volumeMute' : 'volumeNormal'} size={16} />
+                </button>
                 <div className='w-[5.8rem] max-w-full'>
-                <CostumRange 
-                   step ={0.01}
-                   min={0}
-                   max={1}
-                   value={state?.volume}
-                   onChange={value => controls.volume(value )}
-
-                  /></div>
-                  <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
-                    <Icon name='fullScreen' size={16}/>
+                    <CostumRange
+                        step={0.01}
+                        min={0}
+                        max={1}
+                        value={state?.volume}
+                        onChange={value => controls.volume(value)}
+                    />
+                </div>
+                <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
+                    <Icon name='fullScreen' size={16} />
                 </button>
-
-                
+            </div>
         </div>
-
-    </div>)
+    );
 }
-

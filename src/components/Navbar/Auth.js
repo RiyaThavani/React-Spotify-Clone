@@ -1,11 +1,12 @@
 import { Menu } from '@headlessui/react'
 import {Icon} from 'Icons'
+import avatar from 'img/newpp.jpeg';
 
 export default function Auth (){
 
 const user ={
   name:'Sedat Bilece',
-  avatar:'https://yt3.ggpht.com/u0IIM17oW5IyuZBmRcnZT_2GqbRM7yO7qLDwSD3sewQ1kaNK9vI-fLOK9U6q6UnR8Xg2_09QtA=s108-c-k-c0x00ffffff-no-rj'
+  avatar,
 }
 
 
@@ -16,7 +17,7 @@ const user ={
         { ({open})=>(
           <>
           <Menu.Button className={`flex item-center justify-center h-8 rounded-3xl ${open ? 'bg-active':'bg-black'} bg-black pr-2 mt-5 hover:bg-active` }>
-          <img src={user.avatar} className='w-8 h-8 rounded-full p-px mr-2'/>
+          <img src={user.avatar} alt={user.name} className='w-8 h-8 rounded-full p-px mr-2'/>
           <span>{user.name}</span>
           <span className={open===true ? 'rotate-180':''}>
           <Icon name="downdir" size={16} className='ml-2'/>

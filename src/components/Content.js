@@ -4,6 +4,7 @@ import {Routes, Route} from 'react-router-dom';
 import Home from 'views/Home';
 import Search from 'views/Search';
 import Collection from 'views/Collection';
+import Genre from 'views/Genre';
 function Content (){
 
 
@@ -14,6 +15,7 @@ function Content (){
          <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/search" element={<Search/>} />
+            <Route path="/genre/:categoryId" element={<Genre/>} />
             <Route path="/collection" element={<Collection/>} />
          </Routes>
          </div>
