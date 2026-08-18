@@ -5,12 +5,15 @@ import CostumRange from './CostumRange';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setCurrent, setPlaying } from 'stores/player';
+import { toggleLike } from 'stores/likes';
 import songs from 'data/songs';
 import { getSongPreview } from 'services/musicApi';
 
 export default function Player() {
     const dispatch = useDispatch();
     const { current, playing } = useSelector(state => state.player);
+    const likedSongIds = useSelector(state => state.likes.likedSongIds);
+    const isCurrentLiked = current ? likedSongIds.includes(current.id) : false;
 
   async function changeTrack(direction) {
     if (!songs.length) return;
@@ -107,6 +110,16 @@ export default function Player() {
                 </a>
               )}
                         </div>
+                    <button
+                        type='button'
+                        aria-label={isCurrentLiked ? 'Remove from Liked Songs' : 'Save to Liked Songs'}
+                        onClick={() => dispatch(toggleLike(current.id))}
+                        className={`w-8 h-8 flex items-center justify-center [&_path]:fill-current transition-transform hover:scale-110 ${
+                            isCurrentLiked ? 'text-green-500' : 'text-white text-opacity-70 hover:text-opacity-100'
+                        }`}
+                    >
+                        <Icon name={isCurrentLiked ? 'heart' : 'heartEmpty'} size={18} />
+                    </button>
                     </div>
                 )}
             </div>

@@ -4,6 +4,7 @@ import Menu from 'components/Sidebar/Menu';
 import {Icon} from 'Icons'
 import Playlist from "./Sidebar/Playlist";
 import DownloadApp from "./Sidebar/DownloadApp";
+import { NavLink } from "react-router-dom";
 function Sidebar (){
 
 
@@ -27,12 +28,15 @@ function Sidebar (){
                     </button>
                 </li>
                 <li>
-                    <button className="py-2 px-6 flex items-center group text-sm text-link font-semibold hover:text-white w-full text-left">
+                    <NavLink
+                        to='/collection/liked'
+                        style={({ isActive }) => (isActive ? { color: 'white' } : undefined)}
+                        className="py-2 px-6 flex items-center group text-sm text-link font-semibold hover:text-white w-full text-left">
                     <span  className="w-6 h-6 flex  items-center justify-center mr-4 bg-indigo-500 rounded-sm bg-opacity-60 group-hover:bg-opacity-100">
                         <Icon name="heart" size={16} />
                     </span>
                     Liked Songs
-                    </button>
+                    </NavLink>
                 </li>
             </ul>
 

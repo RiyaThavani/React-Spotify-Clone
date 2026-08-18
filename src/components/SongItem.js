@@ -1,12 +1,14 @@
 import { Icon } from 'Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrent, setPlaying } from 'stores/player';
+import { toggleLike } from 'stores/likes';
 import { getSongPreview } from 'services/musicApi';
 import { useEffect, useState } from 'react';
 
 function SongItem({ item }) {
   const dispatch = useDispatch();
   const { current, playing } = useSelector(state => state.player);
+  const likedSongIds = useSelector(state => state.likes.likedSongIds);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [catalogSong, setCatalogSong] = useState(null);
@@ -21,6 +23,7 @@ function SongItem({ item }) {
   }, [item]);
 
   const isActive = current?.id === item.id;
+  const isLiked = likedSongIds.includes(item.id);
   const displaySong = catalogSong || item;
 
   const updateCurrent = async () => {
@@ -64,6 +67,16 @@ function SongItem({ item }) {
             Loading official album artwork…
           </div>
         )}
+        <button
+          type='button'
+          aria-label={isLiked ? 'Remove from Liked Songs' : 'Add to Liked Songs'}
+          onClick={e => { e.stopPropagation(); dispatch(toggleLike(item.id)); }}
+          className={`w-8 h-8 items-center justify-center rounded-full bg-black/60 [&_path]:fill-current absolute top-2 right-2 z-10 transition-transform hover:scale-110 ${
+            isLiked ? 'flex text-green-500' : 'hidden group-hover:flex group-focus:flex text-white/90 hover:text-white'
+          }`}
+        >
+          <Icon name={isLiked ? 'heart' : 'heartEmpty'} size={18} />
+        </button>
         <button
           type='button'
           onClick={e => { e.stopPropagation(); updateCurrent(); }}
