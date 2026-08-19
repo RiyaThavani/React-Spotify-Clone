@@ -1,7 +1,3 @@
-import { Icon } from 'Icons'
-
-
-
 function Search() {
 
     return (

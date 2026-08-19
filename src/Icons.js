@@ -198,12 +198,23 @@ const FullScreenIcon = ({size}) => {
 
     return (
         <svg role="img" height={size} width={size} class="Svg-ytk21e-0 gFcOie IYDlXmBmmUKHveMzIPCF" viewBox="0 0 16 16">
-                  
-                  <path fill="#b3b3b3" d="M6.53 9.47a.75.75 0 010 1.06l-2.72 2.72h1.018a.75.75 0 010 1.5H1.25v-3.579a.75.75 0 011.5 0v1.018l2.72-2.72a.75.75 0 011.06 0zm2.94-2.94a.75.75 0 010-1.06l2.72-2.72h-1.018a.75.75 0 110-1.5h3.578v3.579a.75.75 0 01-1.5 0V3.81l-2.72 2.72a.75.75 0 01-1.06 0z"></path>
+                   
+                   <path fill="#b3b3b3" d="M6.53 9.47a.75.75 0 010 1.06l-2.72 2.72h1.018a.75.75 0 010 1.5H1.25v-3.579a.75.75 0 011.5 0v1.018l2.72-2.72a.75.75 0 011.06 0zm2.94-2.94a.75.75 0 010-1.06l2.72-2.72h-1.018a.75.75 0 110-1.5h3.578v3.579a.75.75 0 01-1.5 0V3.81l-2.72 2.72a.75.75 0 01-1.06 0z"></path>
 
 
-            </svg>
+             </svg>
 
+    )
+}
+
+const MenuIcon = ({size}) => {
+
+    return (
+        <svg role="img" height={size} width={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M3 6H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
     )
 }
 
@@ -275,7 +286,8 @@ const Icon =  ({size=24,name}) =>{
         heartEmpty:HeartEmptyIcon,
         picInPic:PicInPicIcon,
         volumeMute:VolumeMuteIcon,
-        volumeNormal:VolumeNormalIcon
+        volumeNormal:VolumeNormalIcon,
+        menu:MenuIcon
 
 
 

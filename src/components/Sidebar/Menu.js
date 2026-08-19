@@ -16,7 +16,7 @@ function Menu(){
                     <span>
                         <Icon name="home" size={24} />
                     </span>
-                    Ana sayfa
+                    Home
                     </NavLink>
             </li>
             <li>
@@ -26,7 +26,7 @@ function Menu(){
                 <span>
                         <Icon name="search" size={24} />
                     </span>
-                    Ara</NavLink>
+                    Search</NavLink>
             </li>
             <li>
                 <NavLink style={({ isActive }) =>
@@ -35,7 +35,7 @@ function Menu(){
                 <span>
                         <Icon name="library" size={24} />
                     </span>
-                    Kitaplığın</NavLink>
+                    Your Library</NavLink>
             </li>
         </ul>
     </nav>)

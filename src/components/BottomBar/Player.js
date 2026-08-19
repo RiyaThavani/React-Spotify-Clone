@@ -26,6 +26,10 @@ export default function Player() {
       const playableSong = await getSongPreview(songs[nextIndex]);
       dispatch(setCurrent(playableSong));
       dispatch(setPlaying(true));
+      // Tell the <audio> element to actually start the new track.
+      window.dispatchEvent(new CustomEvent('player-command', {
+        detail: { action: 'play', previewUrl: playableSong.previewUrl },
+      }));
     } catch {
       dispatch(setPlaying(false));
     }
@@ -62,7 +66,7 @@ export default function Player() {
   }, [audioRef, dispatch]);
 
     useEffect(() => {
-        if (!current?.src) return;
+        if (!current?.previewUrl) return;
         if (playing) {
             controls.play();
         } else {
@@ -78,12 +82,12 @@ export default function Player() {
     }, [state.playing, dispatch]);
 
     return (
-        <div className="flex justify-between items-center h-full px-4">
+        <div className="flex justify-between items-center h-full px-2 md:px-4">
             {/* ── Left: Current Song Info ── */}
-            <div className="min-w-[11.25rem] w-[30%] flex items-center">
+            <div className="min-w-[8rem] w-[30%] flex items-center hidden sm:flex">
                 {current && (
-                    <div className='flex items-center gap-3'>
-                        <div className='h-14 w-14 flex-shrink-0'>
+                    <div className='flex items-center gap-2 md:gap-3'>
+                        <div className='h-10 w-10 md:h-14 md:w-14 flex-shrink-0'>
                             <img
                                 src={current.image}
                                 alt={current.title}
@@ -91,24 +95,24 @@ export default function Player() {
                             />
                         </div>
                         <div className='overflow-hidden'>
-                            <h6 className='text-sm font-semibold hover:underline truncate'>
+                            <h6 className='text-xs md:text-sm font-semibold hover:underline truncate'>
                                 {current.title}
                             </h6>
-              {current.artist && (
-                <p className='text-xs text-gray-400 truncate hover:underline cursor-pointer'>
-                  {current.artist}
-                </p>
-              )}
-              {current.storeUrl && (
-                <a
-                  href={current.storeUrl}
-                  target='_blank'
-                  rel='noreferrer'
-                  className='block text-[0.65rem] text-link hover:underline truncate'
-                >
-                  Preview courtesy of iTunes · View song
-                </a>
-              )}
+                {current.artist && (
+                    <p className='text-[0.65rem] md:text-xs text-gray-400 truncate hover:underline cursor-pointer'>
+                      {current.artist}
+                    </p>
+                )}
+                {current.storeUrl && (
+                    <a
+                        href={current.storeUrl}
+                        target='_blank'
+                        rel='noreferrer'
+                        className='block text-[0.6rem] md:text-[0.65rem] text-link hover:underline truncate'
+                    >
+                        Preview courtesy of iTunes · View song
+                    </a>
+                )}
                         </div>
                     <button
                         type='button'
@@ -126,7 +130,7 @@ export default function Player() {
 
             {/* ── Centre: Controls + Progress ── */}
             <div className="flex flex-col items-center max-w-[45.125rem] w-[40%]">
-                <div className="flex items-center gap-x-2">
+                <div className='w-full flex items-center justify-center gap-x-1 md:gap-x-2'>
                     <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
                         <Icon name='shuffle' size={16} />
                     </button>
@@ -166,7 +170,7 @@ export default function Player() {
 
                 <div className='w-full flex items-center gap-x-2'>
                     {audio}
-                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-10 text-right'>
+                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-8 md:w-10 text-right'>
                         {secondsToTime(state?.time)}
                     </div>
                     <CostumRange
@@ -176,14 +180,14 @@ export default function Player() {
                         value={state?.time}
                         onChange={value => controls.seek(value)}
                     />
-                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-10'>
+                    <div className='text-[0.7rem] text-white text-opacity-70 flex items-center justify-center w-8 md:w-10'>
                         {secondsToTime(state?.duration)}
                     </div>
                 </div>
             </div>
 
             {/* ── Right: Volume Controls ── */}
-            <div className="min-w-[11.25rem] w-[30%] flex justify-end items-center gap-1">
+            <div className="min-w-[8rem] w-[30%] flex justify-end items-center gap-1 hidden sm:flex">
                 <button className="w-8 h-8 flex items-center justify-center text-white text-opacity-70 hover:text-opacity-100">
                     <Icon name='queue' size={16} />
                 </button>
@@ -196,7 +200,7 @@ export default function Player() {
                 >
                     <Icon name={state?.volume === 0 ? 'volumeMute' : 'volumeNormal'} size={16} />
                 </button>
-                <div className='w-[5.8rem] max-w-full'>
+                <div className='w-[4rem] md:w-[5.8rem] max-w-full'>
                     <CostumRange
                         step={0.01}
                         min={0}
