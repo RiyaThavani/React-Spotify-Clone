@@ -17,6 +17,16 @@ const GENRE_LABELS = {
   'R&B':      '🎶 R&B & Soul',
 };
 
+const GENRE_TO_CATEGORY_ID = {
+  Bollywood: 1,
+  English: 2,
+  'Hip-Hop': 3,
+  Electronic: 4,
+  Rock: 5,
+  Punjabi: 6,
+  'R&B': 7,
+};
+
 function getGreeting() {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
@@ -98,14 +108,12 @@ function Home() {
       {/* ── Made For You ── */}
       <Section
         title="Made for you"
-        more="#"
         items={madeForYou}
       />
 
       {/* ── Recently Played ── */}
       <Section
         title="Recently played"
-        more="#"
         items={recentlyPlayed}
       />
 
@@ -113,11 +121,12 @@ function Home() {
       {GENRES.map(genre => {
         const genreSongs = songs.filter(s => s.genres.includes(genre));
         if (!genreSongs.length) return null;
+        const categoryId = GENRE_TO_CATEGORY_ID[genre];
         return (
           <Section
             key={genre}
             title={GENRE_LABELS[genre] || genre}
-            more='#'
+            more={categoryId ? `/genre/${categoryId}` : false}
             items={genreSongs.slice(0, 6)}
           />
         );

@@ -58,16 +58,21 @@ export function authenticateUser({ username, email, password }) {
     accounts.find(
       item =>
         (item.username || '').toLowerCase() === cleanedUsername &&
-        item.email === cleanedEmail
+        item.email === cleanedEmail &&
+        item.password === password
     ) ||
-    accounts.find(item => item.email === cleanedEmail && !item.username) ||
+    accounts.find(
+      item =>
+        item.email === cleanedEmail &&
+        item.password === password
+    ) ||
     accounts.find(
       item =>
         (item.username || '').toLowerCase() === cleanedUsername &&
         item.password === password
     )
 
-  if (!account || account.password !== password) {
+  if (!account) {
     throw new Error('Invalid username, email, or password.')
   }
 
