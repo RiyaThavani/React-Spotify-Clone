@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Icon } from 'Icons'
 import Section from 'components/Section.js';
 import songs from 'data/songs';
 

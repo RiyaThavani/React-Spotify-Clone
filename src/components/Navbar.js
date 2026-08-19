@@ -11,7 +11,7 @@ const islibrary = useMatch('/collection');
 
     return (<nav className="h-[3.75rem] flex items-center justify-between px-4 md:px-8">
        <Navigaton/>
-
+        
         {issearch && 
         <div>
             <Search />
@@ -28,7 +28,8 @@ const islibrary = useMatch('/collection');
           </div>}
 
        <Auth />
-       
+        
+        
 
     </nav>)
 
